@@ -22,16 +22,23 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   void initBleManager() {
-
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
 
-    bleManager.createClient("5", (devices) {
-      setState(() {
-        if (!mounted) return;
-        this.devices = devices.toString();
-      });
+    bleManager.createClient(
+        restoreStateIdentifier: "5",
+        restoreStateAction: (devices) {
+          setState(() {
+            if (!mounted) return;
+            this.devices = devices.toString();
+          });
+        });
+
+    bleManager.startDeviceScan().listen((scanResult) {
+      print(scanResult);
+    }, onError: (error) {
+      print(error);
     });
   }
 
