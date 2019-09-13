@@ -1,33 +1,30 @@
 part of flutter_ble_lib;
 
-typedef RestoreStateAction = Function(List<Device> restoreStateIdentifier);
+typedef RestoreStateAction = Function(List<Peripheral> restoreStateIdentifier);
 
-class BleManager {
-  FlutterBleLib _bleLib;
+abstract class BleManager {
+  static BleManager _instance;
 
-  BleManager() {
-    _bleLib = FlutterBleLib();
+  static BleManager getInstance() {
+    if (_instance == null) {
+      _instance = InternalBleManager();
+    }
+
+    return _instance;
   }
 
   Future<void> createClient({
     String restoreStateIdentifier,
     RestoreStateAction restoreStateAction,
-  }) {
-    if (restoreStateAction != null) {
-      _bleLib.restoredState().then((devices) {
-        restoreStateAction(devices);
-      });
-    }
-    return _bleLib.createClient(restoreStateIdentifier);
-  }
+  });
 
-  Future<void> destroyClient() => _bleLib.destroyClient();
+  Future<void> destroyClient();
 
   Stream<ScanResult> startDeviceScan({
     int scanMode = ScanMode.LOW_POWER,
     int callbackType = CallbackType.ALL_MATCHES,
     List<String> uuids,
-  }) => _bleLib.startDeviceScan(scanMode, callbackType, uuids);
+  });
 
-  Future<void> stopDeviceScan() => _bleLib.stopDeviceScan();
+  Future<void> stopDeviceScan();
 }

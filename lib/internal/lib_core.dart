@@ -1,30 +1,37 @@
 part of flutter_ble_lib;
 
-class FlutterBleLib {
-  static const MethodChannel _methodChannel =
+abstract class FlutterBLE {
+  InternalBleManager _manager;
+
+  final MethodChannel _methodChannel =
   const MethodChannel(ChannelName.FLUTTER_BLE_LIB);
+}
 
-  static const EventChannel _restoreStateEventChannel =
-  const EventChannel(ChannelName.STATE_RESTORE_EVENTS);
+class FlutterBleLib extends FlutterBLE with DeviceConnectionMixin {
+  final EventChannel _restoreStateEventChannel =
+      const EventChannel(ChannelName.STATE_RESTORE_EVENTS);
 
-  static const EventChannel _scanEventChannel =
-  const EventChannel(ChannelName.SCANNING_EVENTS);
+  final EventChannel _scanEventChannel =
+      const EventChannel(ChannelName.SCANNING_EVENTS);
 
-  Future<List<Device>> restoredState() =>
-      _restoreStateEventChannel
-          .receiveBroadcastStream()
-          .map(
-            (jsonString) {
+  void registerManager(InternalBleManager manager) {
+    _manager = manager;
+  }
+
+  Future<List<Peripheral>> restoredState() => _restoreStateEventChannel
+      .receiveBroadcastStream()
+      .map(
+        (jsonString) {
           if (jsonString == null)
             return null;
           else
             return [
-              Device.fromJson(jsonString)
+              Peripheral.fromJson(jsonDecode(jsonString), _manager)
             ]; //TODO Add proper mapping from json here (11.09.2019)
         },
       )
-          .take(1)
-          .single;
+      .take(1)
+      .single;
 
   Future<void> createClient(String restoreStateIdentifier) async {
     await _methodChannel.invokeMethod(
@@ -39,9 +46,8 @@ class FlutterBleLib {
     return;
   }
 
-  Stream<ScanResult> startDeviceScan(int scanMode,
-      int callbackType,
-      List<String> uuids,) async* {
+  Stream<ScanResult> startDeviceScan(
+      int scanMode, int callbackType, List<String> uuids) async* {
     await _methodChannel.invokeMethod(
       MethodName.START_DEVICE_SCAN,
       <String, dynamic>{
@@ -50,14 +56,13 @@ class FlutterBleLib {
         ArgumentName.UUIDS: uuids
       },
     );
-    yield* _scanEventChannel
-        .receiveBroadcastStream()
-        .map((scanResultJson) {
+    yield* _scanEventChannel.receiveBroadcastStream().map((scanResultJson) {
       return ScanResult.fromJson(
-        jsonDecode(scanResultJson),
+        jsonDecode(scanResultJson), _manager
       );
     });
   }
+
   Future<void> stopDeviceScan() async {
     await _methodChannel.invokeMethod(MethodName.STOP_DEVICE_SCAN);
     return;

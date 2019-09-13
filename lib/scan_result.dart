@@ -16,22 +16,20 @@ abstract class Metadata {
 }
 
 class ScanResult {
-  String deviceId;
-  String deviceName;
+  Peripheral peripheral;
   int rssi;
   int mtu;
   bool isConnectable;
   List<String> overflowServiceUUIDs;
   AdvertisementData advertisementData;
 
-  ScanResult.fromJson(Map<String, dynamic> json)
-      : deviceId = json[Metadata.ID],
-        deviceName = json[Metadata.NAME],
+  ScanResult.fromJson(Map<String, dynamic> json, PeripheralManager manager)
+      : peripheral = Peripheral.fromJson(json, manager),
         rssi = json[Metadata.RSSI],
         mtu = json[Metadata.MTU],
         isConnectable = json[Metadata.IS_CONNECTABLE],
         overflowServiceUUIDs = json[Metadata.OVERFLOW_SERVICE_UUIDS],
-        advertisementData = AdvertisementData.fromJson(json);
+        advertisementData = AdvertisementData._fromJson(json);
 }
 
 class AdvertisementData {
