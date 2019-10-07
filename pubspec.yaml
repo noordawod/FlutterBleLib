@@ -5,17 +5,18 @@ author: "Polidea"
 homepage: https://github.com/Polidea/FlutterBleLib
 
 environment:
-  sdk: ">=1.8.0 <2.0.0"
+  sdk: ">=1.8.0 <3.0.0"
 
 flutter:
   plugin:
     androidPackage: com.polidea.flutterblelib
     pluginClass: FlutterBleLibPlugin
 
+flutter_i18n:
+  enable-flutter-i18n: false
+
 dependencies:
   flutter:
     sdk: flutter
-  convert: "^2.0.1"
-  protobuf: '^0.6.0'
-
-
+  convert: ^2.1.1
+  protobuf: ^1.0.0

@@ -4,8 +4,8 @@ description: Demonstrates how to use the flutter_ble_lib plugin.
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^0.1.0
-  uuid: 0.5.3
+  cupertino_icons: ^0.1.2
+  uuid: 2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -13,6 +13,9 @@ dev_dependencies:
 
   flutter_ble_lib:
     path: ../
+
+flutter_i18n:
+  enable-flutter-i18n: false
 
 flutter:
   uses-material-design: true

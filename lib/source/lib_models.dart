@@ -237,7 +237,7 @@ class MonitorCharacteristic {
   String transactionId;
   Characteristic characteristic;
 
-  MonitorCharacteristic(String this.transactionId, this.characteristic);
+  MonitorCharacteristic(this.transactionId, this.characteristic);
 
   static MonitorCharacteristic fromMessage(
       bleData.MonitorCharacteristicMessage monitorCharacteristicMessage) =>
